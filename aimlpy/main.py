@@ -1,45 +1,18 @@
-# """
-# -- Created by: Ashok Kumar Pant
-# -- Email: asokpant@gmail.com
-# -- Created on: 04/05/2025
-# """
-#
-import os
-import sys
-
-from fastapi.middleware.cors import CORSMiddleware
-
-from aimlpy.api import health_router, recommendation_router
-from aimlpy import setting
-# from aimlpy.util import loggerutil
-
-sys.path.append(os.getcwd())
-
-import uvicorn
-import nest_asyncio
-
-nest_asyncio.apply()
-
 from fastapi import FastAPI
+from api.patient_router import router as patient_router
 
-# logger = loggerutil.get_logger(__name__)
 app = FastAPI(
-    title="Python AI/ML API",
-    description="Demo API",
-    version="1.0.0",
-    author="Ashok Pant",
-    email="ashok@treeleaf.ai",
+    title="Liver Patient Monitoring System",
+    description="A system for monitoring liver patients using ML and risk scoring",
+    version="1.0.0"
 )
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins="*",
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.include_router(patient_router)
+
+@app.get("/")
+def root():
+    return {"message": "Liver Patient Monitoring System is running!"}
 
 if __name__ == "__main__":
-    # loggerutil.setup_logging()
-    uvicorn.run("main:app", host="0.0.0.0", port=setting.API_PORT, reload=False,
-                loop="asyncio", )
+    import uvicorn
+    uvicorn.run("main:app", host="127.0.0.1", port=8000, reload=True)

@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
-DATABASE_URL = "postgresql://postgres@localhost:5432/liver_monitoring_system"
+DATABASE_URL = "postgresql://postgres:your_password_here@localhost:5432/liver_monitoring_system"
 #                                      ↑ change this to your PostgreSQL password
 API_PORT = 8000
 
