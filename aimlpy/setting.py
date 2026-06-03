@@ -1,22 +1,25 @@
-"""
--- Created by: Ashok Kumar Pant
--- Email: asokpant@gmail.com
--- Created on: 04/05/2025
-"""
-import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, declarative_base
 
-from dotenv import load_dotenv
+DATABASE_URL = "postgresql://postgres@localhost:5432/liver_monitoring_system"
+#                                      ↑ change this to your PostgreSQL password
+API_PORT = 8000
 
-load_dotenv(verbose=True)
+# ── SQLAlchemy Engine ─────────────────────────────────────────────────────────
+engine = create_engine(DATABASE_URL, echo=True)
+# echo=True prints SQL queries in terminal (helpful while learning)
+
+# ── Session Factory ───────────────────────────────────────────────────────────
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+# ── Base class for all models ─────────────────────────────────────────────────
+Base = declarative_base()
 
 
-class Settings(object):
-    LOG_LEVEL = os.getenv('LOG_LEVEL', 'DEBUG')
-    API_PORT = int(os.getenv('API_PORT', 8000))
-
-    DB_HOST = os.getenv('DB_HOST', 'localhost')
-    DB_PORT = os.getenv('DB_PORT', 5432)
-    DB_NAME = os.getenv('DB_NAME', 'aimlpy')
-    DB_USER = os.getenv('DB_USER', 'postgres')
-    DB_PASSWORD = os.getenv('DB_PASSWORD', 'Passw0rd')
-    DATABASE_URL = os.getenv('DB_URL', f'postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}')
+# ── Helper: get a DB session ──────────────────────────────────────────────────
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
